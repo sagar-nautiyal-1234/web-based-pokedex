@@ -1,0 +1,84 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+{% if not_found %}
+    <h2 style="font-size: 28px; color: #ff4d4d;">Pokémon not found.</h2>
+{% else %}
+
+<div style="
+    background: #2a2a2a;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 0 15px #0007;
+">
+
+    <!-- Name + ID -->
+    <h2 style="font-size: 28px; margin-bottom: 10px;">
+        #{{ id }} — {{ name }}
+    </h2>
+
+    <!-- Image -->
+    <img src="{{ sprite }}" 
+         width="180" 
+         height="180"
+         alt="{{ name }}"
+         style="display:block; margin: 15px auto;">
+
+    <!-- Types -->
+    <p style="margin: 10px 0;">
+        <strong>Types:</strong>
+        {% for t in types %}
+            <span style="
+                background:#3a3a3a; 
+                padding:4px 8px;
+                border-radius:6px;
+                margin-right:5px;
+                text-transform:capitalize;
+            ">
+            {{ t }}
+            </span>
+        {% endfor %}
+    </p>
+
+    <!-- Basic Info -->
+    <p><strong>Height:</strong> {{ height }}</p>
+    <p><strong>Weight:</strong> {{ weight }}</p>
+
+    <!-- Stats -->
+    <h3 style="margin-top: 20px; font-size:22px;">Stats</h3>
+    <ul style="list-style:none; padding:0; margin-top:10px;">
+        {% for key, value in stats.items %}
+        <li style="
+            display:flex;
+            justify-content:space-between;
+            padding:5px 0;
+            border-bottom:1px solid #444;
+            text-transform: capitalize;
+        ">
+            <span>{{ key }}</span> <span>{{ value }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Abilities -->
+    <h3 style="margin-top: 20px; font-size:22px;">Abilities</h3>
+    <ul style="list-style:none; padding:0; margin-top:10px;">
+        {% for a in abilities %}
+        <li style="
+            padding:5px 0;
+            border-bottom:1px solid #444;
+            text-transform: capitalize;
+        ">
+            {{ a }}
+        </li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

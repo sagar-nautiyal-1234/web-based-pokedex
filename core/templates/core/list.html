@@ -1,0 +1,98 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<h2 style="font-size: 26px; margin-bottom: 20px; font-weight: 600;">
+    {% if region_name %}
+        {{ region_name }} Pokédex
+    {% else %}
+        Pokédex
+    {% endif %}
+</h2>
+
+<!-- REGION MENU WITH HAMBURGER -->
+<div style="margin-bottom: 25px;">
+
+    <h3 style="margin-bottom:10px;">Regions</h3>
+
+    <!-- Hamburger button -->
+    <button id="region-toggle"
+        style="
+            background:#2a2a2a;
+            color:#ffcb05;
+            border:none;
+            padding:10px 15px;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            margin-bottom:10px;
+        ">
+        ☰ Show/Hide Regions
+    </button>
+
+    <!-- Region Buttons -->
+    <div id="region-menu"
+         style="display:none; flex-wrap:wrap; gap:10px;">
+
+        <a href="/region/kanto/" class="pokemon-card" style="padding:10px 15px;">Kanto</a>
+        <a href="/region/original-johto/" class="pokemon-card" style="padding:10px 15px;">Johto</a>
+        <a href="/region/hoenn/" class="pokemon-card" style="padding:10px 15px;">Hoenn</a>
+        <a href="/region/original-sinnoh/" class="pokemon-card" style="padding:10px 15px;">Sinnoh</a>
+        <a href="/region/original-unova/" class="pokemon-card" style="padding:10px 15px;">Unova</a>
+        <a href="/region/kalos-central/" class="pokemon-card" style="padding:10px 15px;">Kalos</a>
+
+        <a href="/region/original-alola/" class="pokemon-card" style="padding:10px 15px;">Alola (Original)</a>
+        <a href="/region/updated-alola/" class="pokemon-card" style="padding:10px 15px;">Alola (Updated)</a>
+
+        <a href="/region/galar/" class="pokemon-card" style="padding:10px 15px;">Galar</a>
+
+    </div>
+
+</div>
+
+
+<!-- POKEMON CARD GRID -->
+<div style="
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 20px;
+">
+    {% for p in pokemon_list %}
+    <a href="/pokemon/{{ p.id }}/" class="pokemon-card">
+
+        <img src="{{ p.sprite }}" 
+             width="120" 
+             height="120"
+             alt="{{ p.name }}"
+             style="display: block; margin: 0 auto 10px;">
+
+        <p style="margin: 5px 0; color:#ffcb05; font-size:14px;">
+            #{{ p.id }}
+        </p>
+
+        <h3 style="margin: 0; font-size: 18px; text-transform: capitalize;">
+            {{ p.name }}
+        </h3>
+
+    </a>
+    {% endfor %}
+</div>
+
+<!-- PAGINATION -->
+{% if not region_name %}
+<div style="margin-top: 30px; display:flex; justify-content:space-between;">
+
+    {% if has_prev %}
+        <a href="?page={{ page|add:-1 }}" style="color:#ffcb05; font-size:18px;">⬅ Previous</a>
+    {% else %}
+        <span></span>
+    {% endif %}
+
+    {% if has_next %}
+        <a href="?page={{ page|add:1 }}" style="color:#ffcb05; font-size:18px;">Next ➡</a>
+    {% endif %}
+
+</div>
+{% endif %}
+
+{% endblock %}

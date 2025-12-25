@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokedex</title>
+
+    <style>
+        body { 
+            background: #1a1a1a; 
+            color: white; 
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #2a2a2a;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 a {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffcb05;
+            text-decoration: none;
+        }
+
+        .search-box input {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+            width: 180px;
+        }
+
+        /* Card Styles */
+        .pokemon-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 10px #0005;
+            transition: all .2s ease;
+        }
+
+        .pokemon-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 16px #0008;
+        }
+
+        a {
+            color: #ffcb05;
+            text-decoration: none;
+        }
+
+        .content-wrapper {
+            padding: 20px 30px;
+        }
+
+        /* Responsive layout for region menu */
+        @media (max-width: 768px) {
+            #region-menu {
+                flex-direction: column;
+            }
+
+            #region-menu a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1><a href="/">Pokedex</a></h1>
+
+    <form method="get" action="/pokemon/" class="search-box"
+          onsubmit="event.preventDefault(); window.location.href='/pokemon/' + this.q.value.toLowerCase();">
+        <input name="q" placeholder="Search Pokémon..." required>
+    </form>
+</header>
+
+<div class="content-wrapper">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Hamburger Toggle Script -->
+<script>
+    // This will run on every page, but only do something if
+    // both #region-toggle and #region-menu exist (list page).
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.getElementById("region-toggle");
+        const regionMenu = document.getElementById("region-menu");
+
+        if (toggleButton && regionMenu) {
+            toggleButton.addEventListener("click", () => {
+                // If hidden or not set, show it as flex
+                if (regionMenu.style.display === "none" || regionMenu.style.display === "") {
+                    regionMenu.style.display = "flex";
+                } else {
+                    regionMenu.style.display = "none";
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
