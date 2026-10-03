@@ -8,9 +8,21 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-z*)tyaedl=$0u!u6p-!51-d6jl7&7*(9w4zm+et2!l*$*nu-wd'
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1','192.168.1.37']
+# ----------------------------------------------------------
+# SECURITY
+# ----------------------------------------------------------
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-development-only-key-change-this"
+)
+
+DEBUG = os.environ.get("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "127.0.0.1,localhost"
+).split(",")
 
 
 # ----------------------------------------------------------
@@ -25,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # our app
+    # Our app
     'core',
 ]
 
@@ -50,6 +62,7 @@ MIDDLEWARE = [
 # ----------------------------------------------------------
 
 ROOT_URLCONF = 'pokedex.urls'
+
 WSGI_APPLICATION = 'pokedex.wsgi.application'
 
 
@@ -60,7 +73,7 @@ WSGI_APPLICATION = 'pokedex.wsgi.application'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'core/templates')],
+        'DIRS': [BASE_DIR / 'core' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,10 +103,18 @@ DATABASES = {
 # ----------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'
+    },
 ]
 
 
@@ -102,8 +123,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # ----------------------------------------------------------
 
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
+
 USE_TZ = True
 
 
@@ -111,12 +135,13 @@ USE_TZ = True
 # STATIC FILES
 # ----------------------------------------------------------
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "core/static"),
+    BASE_DIR / 'core' / 'static',
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # ----------------------------------------------------------
@@ -124,3 +149,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # ----------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
