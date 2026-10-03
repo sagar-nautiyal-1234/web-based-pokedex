@@ -5,6 +5,7 @@ Django settings for pokedex project.
 from pathlib import Path
 import os
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -17,20 +18,29 @@ SECRET_KEY = os.environ.get(
     "django-insecure-development-only-key"
 )
 
-# True locally, False on Render
-DEBUG = "RENDER" not in os.environ
+# Render provides RENDER_EXTERNAL_HOSTNAME automatically.
+# If it exists, we are running in production.
+DEBUG = os.environ.get("RENDER_EXTERNAL_HOSTNAME") is None
 
-# Local hosts
+
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
 ]
 
-# Render automatically provides this
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+
+# Required for secure POST requests on Render
+CSRF_TRUSTED_ORIGINS = []
+
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(
+        f"https://{RENDER_EXTERNAL_HOSTNAME}"
+    )
 
 
 # ----------------------------------------------------------
@@ -56,7 +66,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
-    # Static file serving in production
+    # Serve static files in production
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -115,16 +125,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator'
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator'
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator'
     },
 ]
 
@@ -154,10 +168,17 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-if not DEBUG:
-    STATICFILES_STORAGE = (
-        'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    )
+
+# WhiteNoise configuration
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND":
+        "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # ----------------------------------------------------------
