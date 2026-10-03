@@ -14,15 +14,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
-    "django-insecure-development-only-key-change-this"
+    "django-insecure-development-only-key"
 )
 
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+# True locally, False on Render
+DEBUG = "RENDER" not in os.environ
 
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
-).split(",")
+# Local hosts
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+]
+
+# Render automatically provides this
+RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
 # ----------------------------------------------------------
@@ -37,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Our app
     'core',
 ]
 
@@ -48,6 +55,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    # Static file serving in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -143,10 +154,14 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+if not DEBUG:
+    STATICFILES_STORAGE = (
+        'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    )
+
 
 # ----------------------------------------------------------
 # DEFAULT PRIMARY KEY FIELD TYPE
 # ----------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
