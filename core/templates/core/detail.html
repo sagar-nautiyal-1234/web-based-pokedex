@@ -2,78 +2,285 @@
 
 {% block content %}
 
+<style>
+    .pk-not-found {
+        font-size: 28px;
+        color: #ff4d4d;
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .pk-detail {
+        background: linear-gradient(160deg, #303038 0%, #2a2a2a 100%);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        padding: 28px;
+        border-radius: 18px;
+        max-width: 520px;
+        margin: 10px auto 30px;
+        box-shadow: 0 12px 32px #0008;
+    }
+
+    .pk-title {
+        font-size: 28px;
+        margin: 0 0 6px;
+        text-align: center;
+        text-transform: capitalize;
+        letter-spacing: 0.3px;
+    }
+
+    .pk-title .pk-id {
+        color: #ffcb05;
+        font-weight: 800;
+    }
+
+    .pk-sprite-wrap {
+        width: 220px;
+        height: 220px;
+        margin: 14px auto;
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 40%, #44445a 0%, #2a2a35 70%);
+        box-shadow: inset 0 0 30px #0006, 0 0 0 4px rgba(255, 203, 5, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pk-sprite-wrap img {
+        display: block;
+        image-rendering: pixelated;
+        filter: drop-shadow(0 6px 8px #0008);
+        transition: transform .25s ease;
+    }
+
+    .pk-sprite-wrap:hover img {
+        transform: scale(1.08);
+    }
+
+    /* Types */
+    .pk-types {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin: 12px 0 18px;
+    }
+
+    .pk-types strong {
+        color: #aaa;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .type-badge {
+        background: #3a3a3a;
+        padding: 5px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: capitalize;
+        color: #fff;
+        text-shadow: 0 1px 2px #0006;
+    }
+
+    .type-normal   { background: #8a8a59; }
+    .type-fire     { background: #e8601c; }
+    .type-water    { background: #4a7fe0; }
+    .type-electric { background: #d9a900; color: #1a1a1a; text-shadow: none; }
+    .type-grass    { background: #4da63a; }
+    .type-ice      { background: #52b8b8; }
+    .type-fighting { background: #b02a24; }
+    .type-poison   { background: #8e3a8e; }
+    .type-ground   { background: #c2a24a; }
+    .type-flying   { background: #8a76d6; }
+    .type-psychic  { background: #e8457a; }
+    .type-bug      { background: #8a9a16; }
+    .type-rock     { background: #9a8a2a; }
+    .type-ghost    { background: #5a4580; }
+    .type-dragon   { background: #5a2ae0; }
+    .type-dark     { background: #5a4a40; }
+    .type-steel    { background: #8a8aa8; }
+    .type-fairy    { background: #d97aa8; }
+
+    /* Basic info */
+    .pk-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .pk-info p {
+        margin: 0;
+        padding: 12px;
+        background: #25252c;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .pk-info strong {
+        display: block;
+        color: #aaa;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 4px;
+    }
+
+    /* Section headings */
+    .pk-detail h3 {
+        margin: 26px 0 0;
+        font-size: 20px;
+        color: #ffcb05;
+        padding-bottom: 6px;
+        border-bottom: 2px solid rgba(255, 203, 5, 0.35);
+    }
+
+    .pk-list {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0;
+    }
+
+    .pk-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid #444;
+        text-transform: capitalize;
+    }
+
+    .pk-list li:last-child {
+        border-bottom: none;
+    }
+
+    /* Stats */
+    .pk-stat {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 4px 12px;
+    }
+
+    .pk-stat-value {
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .pk-stat meter {
+        grid-column: 1 / -1;
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: #1a1a1a;
+        border: none;
+    }
+
+    .pk-stat meter::-webkit-meter-bar {
+        background: #1a1a1a;
+        border: none;
+        border-radius: 999px;
+        height: 8px;
+    }
+
+    .pk-stat meter::-webkit-meter-optimum-value,
+    .pk-stat meter::-webkit-meter-suboptimum-value,
+    .pk-stat meter::-webkit-meter-even-less-good-value {
+        background: linear-gradient(90deg, #ffcb05, #ff9f1c);
+        border-radius: 999px;
+    }
+
+    .pk-stat meter::-moz-meter-bar {
+        background: linear-gradient(90deg, #ffcb05, #ff9f1c);
+        border-radius: 999px;
+    }
+
+    /* Abilities */
+    .pk-abilities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        list-style: none;
+        padding: 0;
+        margin: 12px 0 0;
+    }
+
+    .pk-abilities li {
+        background: #25252c;
+        border: 1px solid rgba(255, 203, 5, 0.3);
+        padding: 6px 14px;
+        border-radius: 999px;
+        text-transform: capitalize;
+        font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
+        .pk-detail {
+            padding: 20px 16px;
+            border-radius: 14px;
+        }
+
+        .pk-sprite-wrap {
+            width: 190px;
+            height: 190px;
+        }
+
+        .pk-info {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 {% if not_found %}
-    <h2 style="font-size: 28px; color: #ff4d4d;">Pokémon not found.</h2>
+    <h2 class="pk-not-found">Pokémon not found.</h2>
 {% else %}
 
-<div style="
-    background: #2a2a2a;
-    padding: 25px;
-    border-radius: 15px;
-    max-width: 500px;
-    margin: auto;
-    box-shadow: 0 0 15px #0007;
-">
+<div class="pk-detail">
 
     <!-- Name + ID -->
-    <h2 style="font-size: 28px; margin-bottom: 10px;">
-        #{{ id }} — {{ name }}
+    <h2 class="pk-title">
+        <span class="pk-id">#{{ id }}</span> — {{ name }}
     </h2>
 
     <!-- Image -->
-    <img src="{{ sprite }}" 
-         width="180" 
-         height="180"
-         alt="{{ name }}"
-         style="display:block; margin: 15px auto;">
+    <div class="pk-sprite-wrap">
+        <img src="{{ sprite }}"
+             width="180"
+             height="180"
+             alt="{{ name }}">
+    </div>
 
     <!-- Types -->
-    <p style="margin: 10px 0;">
+    <p class="pk-types">
         <strong>Types:</strong>
         {% for t in types %}
-            <span style="
-                background:#3a3a3a; 
-                padding:4px 8px;
-                border-radius:6px;
-                margin-right:5px;
-                text-transform:capitalize;
-            ">
-            {{ t }}
-            </span>
+            <span class="type-badge type-{{ t|lower }}">{{ t }}</span>
         {% endfor %}
     </p>
 
     <!-- Basic Info -->
-    <p><strong>Height:</strong> {{ height }}</p>
-    <p><strong>Weight:</strong> {{ weight }}</p>
+    <div class="pk-info">
+        <p><strong>Height:</strong> {{ height }}</p>
+        <p><strong>Weight:</strong> {{ weight }}</p>
+    </div>
 
     <!-- Stats -->
-    <h3 style="margin-top: 20px; font-size:22px;">Stats</h3>
-    <ul style="list-style:none; padding:0; margin-top:10px;">
+    <h3>Stats</h3>
+    <ul class="pk-list">
         {% for key, value in stats.items %}
-        <li style="
-            display:flex;
-            justify-content:space-between;
-            padding:5px 0;
-            border-bottom:1px solid #444;
-            text-transform: capitalize;
-        ">
-            <span>{{ key }}</span> <span>{{ value }}</span>
+        <li class="pk-stat">
+            <span>{{ key }}</span>
+            <span class="pk-stat-value">{{ value }}</span>
+            <meter min="0" max="255" value="{{ value }}"></meter>
         </li>
         {% endfor %}
     </ul>
 
     <!-- Abilities -->
-    <h3 style="margin-top: 20px; font-size:22px;">Abilities</h3>
-    <ul style="list-style:none; padding:0; margin-top:10px;">
+    <h3>Abilities</h3>
+    <ul class="pk-abilities">
         {% for a in abilities %}
-        <li style="
-            padding:5px 0;
-            border-bottom:1px solid #444;
-            text-transform: capitalize;
-        ">
-            {{ a }}
-        </li>
+        <li>{{ a }}</li>
         {% endfor %}
     </ul>
 

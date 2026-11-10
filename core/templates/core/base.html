@@ -2,73 +2,305 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a1a">
     <title>Pokedex</title>
 
     <style>
-        body { 
-            background: #1a1a1a; 
-            color: white; 
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+        * {
+            box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: radial-gradient(1200px 600px at 50% -200px, #2b2b3a 0%, #1a1a1a 60%) fixed;
+            color: #f2f2f2;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---------- Header (sticky: top bar + nav) ---------- */
         header {
-            background: #2a2a2a;
-            padding: 15px 25px;
+            background: rgba(42, 42, 42, 0.88);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 203, 5, 0.18);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 12px 20px;
+            flex-wrap: wrap;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 12px 25px;
+        }
+
+        header h1 {
+            margin: 0;
+            order: 1;
         }
 
         header h1 a {
             font-size: 28px;
-            font-weight: bold;
+            font-weight: 800;
+            letter-spacing: 0.5px;
             color: #ffcb05;
             text-decoration: none;
+            text-shadow: 0 2px 0 #3b4cca, 0 0 18px rgba(255, 203, 5, 0.25);
+            transition: transform .2s ease, text-shadow .2s ease;
+            display: inline-block;
+        }
+
+        header h1 a:hover {
+            transform: scale(1.04);
+            text-shadow: 0 2px 0 #3b4cca, 0 0 26px rgba(255, 203, 5, 0.45);
+        }
+
+        /* ---------- Search ---------- */
+        .search-box {
+            margin: 0 0 0 auto;
+            order: 2;
         }
 
         .search-box input {
-            padding: 8px 10px;
-            border-radius: 6px;
-            border: none;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 14px;
             outline: none;
-            width: 180px;
+            width: 220px;
+            max-width: 100%;
+            transition: border-color .2s ease, box-shadow .2s ease, width .25s ease;
         }
 
-        /* Card Styles */
+        .search-box input::placeholder {
+            color: #8b8b95;
+        }
+
+        .search-box input:focus {
+            border-color: #ffcb05;
+            box-shadow: 0 0 0 4px rgba(255, 203, 5, 0.18);
+            width: 260px;
+        }
+
+        /* ---------- Hamburger button (mobile only) ---------- */
+        #region-toggle {
+            display: none;
+            order: 3;
+            align-items: center;
+            gap: 10px;
+            background: #ffcb05;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .15s ease;
+        }
+
+        #region-toggle:hover {
+            background: #ffe066;
+        }
+
+        .hamburger {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 18px;
+            height: 14px;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 2px;
+            transition: transform .25s ease, opacity .2s ease;
+        }
+
+        #region-toggle[aria-expanded="true"] .hamburger span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        #region-toggle[aria-expanded="true"] .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #region-toggle[aria-expanded="true"] .hamburger span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        /* ---------- Region navigation bar ---------- */
+        #region-menu {
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(0, 0, 0, 0.18);
+        }
+
+        .nav-list {
+            list-style: none;
+            margin: 0 auto;
+            padding: 8px 25px;
+            max-width: 1280px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .nav-list a {
+            display: block;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e8e8ee;
+            transition: background .15s ease, color .15s ease;
+        }
+
+        .nav-list a:hover {
+            background: rgba(255, 203, 5, 0.14);
+            color: #ffcb05;
+        }
+
+        .nav-list a.active {
+            background: #ffcb05;
+            color: #1a1a1a;
+        }
+
+        /* ---------- Cards ---------- */
         .pokemon-card {
-            background: #2a2a2a;
+            background: linear-gradient(160deg, #303038 0%, #2a2a2a 100%);
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
             text-align: center;
             box-shadow: 0 0 10px #0005;
-            transition: all .2s ease;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
         }
 
         .pokemon-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 0 16px #0008;
+            border-color: rgba(255, 203, 5, 0.45);
+            box-shadow: 0 10px 24px #0008;
         }
 
+        .pokemon-card img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ---------- Links ---------- */
         a {
             color: #ffcb05;
             text-decoration: none;
+            transition: color .15s ease;
         }
 
+        a:hover {
+            color: #ffe066;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid rgba(255, 203, 5, 0.6);
+            outline-offset: 2px;
+        }
+
+        /* ---------- Layout ---------- */
         .content-wrapper {
-            padding: 20px 30px;
+            padding: 24px 30px;
+            max-width: 1280px;
+            margin: 0 auto;
         }
 
-        /* Responsive layout for region menu */
+        /* ---------- Mobile: hamburger navigation ---------- */
         @media (max-width: 768px) {
-            #region-menu {
-                flex-direction: column;
+            .header-top {
+                padding: 10px 16px;
             }
 
-            #region-menu a {
+            header h1 a {
+                font-size: 24px;
+            }
+
+            #region-toggle {
+                display: inline-flex;
+                margin-left: auto;
+            }
+
+            .search-box {
+                order: 4;
+                flex: 1 1 100%;
+                margin: 0;
+            }
+
+            .search-box input,
+            .search-box input:focus {
                 width: 100%;
-                text-align: center;
+            }
+
+            /* Collapsed by default; opened by adding .open via the script */
+            #region-menu {
+                display: none;
+                max-height: calc(100vh - 130px);
+                overflow-y: auto;
+            }
+
+            #region-menu.open {
+                display: block;
+            }
+
+            .nav-list {
+                flex-direction: column;
+                flex-wrap: nowrap;
+                padding: 8px 16px 14px;
+                gap: 4px;
+            }
+
+            .nav-list a {
+                padding: 12px 14px;
+                border-radius: 10px;
+                font-size: 15px;
+                text-align: left;
+            }
+
+            .content-wrapper {
+                padding: 18px 16px;
+            }
+        }
+
+        /* ---------- Reduced motion ---------- */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            * {
+                transition: none !important;
+            }
+
+            .pokemon-card:hover,
+            header h1 a:hover {
+                transform: none;
             }
         }
     </style>
@@ -77,36 +309,87 @@
 <body>
 
 <header>
-    <h1><a href="/">Pokedex</a></h1>
+    <div class="header-top">
+        <h1><a href="/">Pokedex</a></h1>
 
-    <form method="get" action="/pokemon/" class="search-box"
-          onsubmit="event.preventDefault(); window.location.href='/pokemon/' + this.q.value.toLowerCase();">
-        <input name="q" placeholder="Search Pokémon..." required>
-    </form>
+        <form method="get" action="/pokemon/" class="search-box"
+              onsubmit="event.preventDefault(); window.location.href='/pokemon/' + this.q.value.toLowerCase();">
+            <input name="q" placeholder="Search Pokémon..." aria-label="Search Pokémon" required>
+        </form>
+
+        <!-- Hamburger button (visible on small screens only) -->
+        <button id="region-toggle" type="button" aria-controls="region-menu" aria-expanded="false">
+            <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span>Regions</span>
+        </button>
+    </div>
+
+    <!-- REGION NAVIGATION BAR -->
+    <nav id="region-menu" aria-label="Regions">
+        <ul class="nav-list">
+            <li><a href="/">All</a></li>
+            <li><a href="/region/kanto/">Kanto</a></li>
+            <li><a href="/region/original-johto/">Johto</a></li>
+            <li><a href="/region/hoenn/">Hoenn</a></li>
+            <li><a href="/region/original-sinnoh/">Sinnoh</a></li>
+            <li><a href="/region/original-unova/">Unova</a></li>
+            <li><a href="/region/kalos-central/">Kalos</a></li>
+            <li><a href="/region/original-alola/">Alola (Original)</a></li>
+            <li><a href="/region/updated-alola/">Alola (Updated)</a></li>
+            <li><a href="/region/galar/">Galar</a></li>
+        </ul>
+    </nav>
 </header>
 
 <div class="content-wrapper">
     {% block content %}{% endblock %}
 </div>
 
-<!-- Hamburger Toggle Script -->
+<!-- Navigation script -->
 <script>
-    // This will run on every page, but only do something if
-    // both #region-toggle and #region-menu exist (list page).
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButton = document.getElementById("region-toggle");
         const regionMenu = document.getElementById("region-menu");
+        if (!toggleButton || !regionMenu) return;
 
-        if (toggleButton && regionMenu) {
-            toggleButton.addEventListener("click", () => {
-                // If hidden or not set, show it as flex
-                if (regionMenu.style.display === "none" || regionMenu.style.display === "") {
-                    regionMenu.style.display = "flex";
-                } else {
-                    regionMenu.style.display = "none";
-                }
-            });
+        function setOpen(open) {
+            regionMenu.classList.toggle("open", open);
+            toggleButton.setAttribute("aria-expanded", open ? "true" : "false");
         }
+
+        // Hamburger toggle
+        toggleButton.addEventListener("click", function () {
+            setOpen(!regionMenu.classList.contains("open"));
+        });
+
+        // Close on Escape
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && regionMenu.classList.contains("open")) {
+                setOpen(false);
+                toggleButton.focus();
+            }
+        });
+
+        // Close when clicking outside the header
+        document.addEventListener("click", function (e) {
+            const header = document.querySelector("header");
+            if (regionMenu.classList.contains("open") && header && !header.contains(e.target)) {
+                setOpen(false);
+            }
+        });
+
+        // Reset when resizing up to the desktop layout
+        window.matchMedia("(min-width: 769px)").addEventListener("change", function (e) {
+            if (e.matches) setOpen(false);
+        });
+
+        // Highlight the current page's link
+        regionMenu.querySelectorAll("a").forEach(function (link) {
+            if (link.pathname === window.location.pathname) {
+                link.classList.add("active");
+                link.setAttribute("aria-current", "page");
+            }
+        });
     });
 </script>
 
